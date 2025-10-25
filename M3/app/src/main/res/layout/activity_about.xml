@@ -66,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mon3tr电子吊坠项目致力于复刻手游明日方舟干员Mon3tr所佩戴的随心情变换的表情挂件，也可作为一般电子吊坠使用。"
+                        android:text="此项目基于Mon3tr电子吊坠项目，为 Doc.孙 特制。祝 Doc.孙 生日快乐！"
                         android:textAppearance="@style/TextAppearance.Body"
                         android:textSize="14sp"
                         android:gravity="center"
@@ -132,119 +132,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- B站主页 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/bilibili_card"
-                style="@style/CardView.Modern"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:strokeColor="?attr/outline"
-                app:strokeWidth="1dp"
-                android:foreground="?attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="20dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_bilibili"
-                        android:tint="?attr/colorPrimary"
-                        android:layout_marginEnd="16dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="作者B站主页"
-                            android:textAppearance="@style/TextAppearance.Headline"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="虽然已经不做视频了~"
-                            android:textAppearance="@style/TextAppearance.Caption"
-                            android:layout_marginTop="4dp" />
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_arrow_right"
-                        android:tint="?attr/colorOnSurface" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 邮箱联系 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/email_card"
-                style="@style/CardView.Modern"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:strokeColor="?attr/outline"
-                app:strokeWidth="1dp"
-                android:foreground="?attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="20dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_email"
-                        android:tint="?attr/colorPrimary"
-                        android:layout_marginEnd="16dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="联系作者"
-                            android:textAppearance="@style/TextAppearance.Headline"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Roy@DMR.gg"
-                            android:textAppearance="@style/TextAppearance.Caption"
-                            android:layout_marginTop="4dp" />
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_arrow_right"
-                        android:tint="?attr/colorOnSurface" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            
 
             <!-- 开源协议 -->
             <com.google.android.material.card.MaterialCardView
@@ -288,7 +176,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="GNU General Public License v3.0"
+                            android:text="Apache License 2.0"
                             android:textAppearance="@style/TextAppearance.Caption"
                             android:layout_marginTop="4dp" />
 

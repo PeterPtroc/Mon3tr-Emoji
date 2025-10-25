@@ -4,7 +4,7 @@
 <p align="center">
 <img src="Images/APPScreenshot.jpg" width="200"></p>
 
-Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https://www.bilibili.com/video/BV131R2YcEuc/?t=148)所佩戴的随心情变换的表情挂件，也可作为一般电子吊坠使用。本项目基于 **ESP32-C3-MINI-1U（ESP32-2424S012）（触摸屏版/[无触摸版](https://github.com/RoyZ-iwnl/Mon3tr-Emoji/tree/no-touch-support)）
+Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https://www.bilibili.com/video/BV131R2YcEuc/?t=148)所佩戴的随心情变换的表情挂件，也可作为一般电子吊坠使用。本项目基于 **ESP32-C3-MINI-1U（ESP32-2424S012）（触摸屏版/[无触摸版](https://github.com/PeterPtroc/Mon3tr-Emoji.git)）
 开发板**开发，通过 BLE + Android APP 实现上传、管理等功能，主分支触摸版固件原生支持滑动手势切换，目前支持上传显示JPEG/GIF格式。
 
 ---
@@ -38,7 +38,7 @@ Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https:/
 1. 安装 [Arduino IDE 2.3.6](https://github.com/arduino/arduino-ide/releases/tag/2.3.6)
 2. 克隆本仓库，并用 Arduino IDE 打开 `Mon3tr_ESP32_Pendant/Mon3tr_ESP32_Pendant.ino`  
     ```bash
-    git clone https://github.com/RoyZ-iwnl/Mon3tr-Emoji.git
+    git clone https://github.com/PeterPtroc/Mon3tr-Emoji.git
     cd Mon3tr_ESP32_Pendant/
     ```
 3. Arduino IDE 设置  
@@ -115,23 +115,23 @@ Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https:/
 
 ### 3. 命令列表
 
-| 命令ID | 名称       | 描述             | 负载格式               |
-|--------|------------|------------------|------------------------|
-| 0x01   | 开始传输   | 开始图片传输     | [图片索引(1字节)]      |
-| 0x02   | 图片数据   | 图片数据分片     | [图片数据(变长)]       |
-| 0x03   | 结束传输   | 结束图片传输     | 无                     |
-| 0x04   | 删除图片   | 删除指定图片     | [图片索引(1字节)]      |
-| 0x05   | 重排图片   | 重新排序图片     | [新顺序索引数组]       |
-| 0x06   | 获取列表   | 获取图片列表     | 无                     |
-| 0x07   | 设置显示   | 设置当前显示图片 | [图片索引(1字节)]      |
-| 0x08   | 获取状态   | 获取设备状态     | 无                     |
+| 命令ID | 名称     | 描述             | 负载格式          |
+| ------ | -------- | ---------------- | ----------------- |
+| 0x01   | 开始传输 | 开始图片传输     | [图片索引(1字节)] |
+| 0x02   | 图片数据 | 图片数据分片     | [图片数据(变长)]  |
+| 0x03   | 结束传输 | 结束图片传输     | 无                |
+| 0x04   | 删除图片 | 删除指定图片     | [图片索引(1字节)] |
+| 0x05   | 重排图片 | 重新排序图片     | [新顺序索引数组]  |
+| 0x06   | 获取列表 | 获取图片列表     | 无                |
+| 0x07   | 设置显示 | 设置当前显示图片 | [图片索引(1字节)] |
+| 0x08   | 获取状态 | 获取设备状态     | 无                |
 
 - 图片索引高4位为格式ID，低4位为文件索引
 
 ### 4. 响应状态码
 
 | 状态码 | 名称     | 描述         |
-|--------|----------|--------------|
+| ------ | -------- | ------------ |
 | 0x00   | 成功     | 命令执行成功 |
 | 0x01   | 一般错误 | 通用错误     |
 | 0x02   | 文件系统 | 文件操作失败 |
@@ -143,7 +143,7 @@ Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https:/
 - 0x00：原始二进制（已弃用）
 - 0x10：JPEG
 - 0x20：PNG（已弃用）
-- 0x30：GFP（[GFP格式规范](https://github.com/RoyZ-iwnl/Mon3tr-Emoji/releases/tag/1.0)）
+- 0x30：GFP（[GFP格式规范](https://github.com/PeterPtroc/Mon3tr-Emoji.git)）
 
 ### 6. 主要通信流程
 
@@ -204,12 +204,12 @@ Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https:/
 
 - 感谢 [囧囧怪的WIFI版本开源项目](https://www.bilibili.com/video/BV1r3LczZE3N/#reply262992366736) 提供灵感  
   外壳 3D 打印建模和开发板购买可参考该视频
-- 感谢 [LYao2514](https://github.com/LYao2514)维护[非触摸屏分支](https://github.com/RoyZ-iwnl/Mon3tr-Emoji/tree/no-touch-support)
+- 感谢 [LYao2514](https://github.com/LYao2514)维护[非触摸屏分支](https://github.com/PeterPtroc/Mon3tr-Emoji.git)
 - 没有Claude 就没有这个项目~
 ---
 
 ### LICENSE
 
-[GPL-3.0](https://github.com/RoyZ-iwnl/Mon3tr-Emoji/blob/main/LICENSE)
+[Apache-2.0](https://github.com/PeterPtroc/Mon3tr-Emoji.git)
 
 如有建议欢迎 issue 或 PR！

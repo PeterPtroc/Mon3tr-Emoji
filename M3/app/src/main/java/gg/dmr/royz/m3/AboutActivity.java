@@ -33,36 +33,19 @@ public class AboutActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         // GitHub贡献者
-        MaterialCardView githubCard = findViewById(R.id.github_card);
-        githubCard.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/RoyZ-iwnl/Mon3tr-Emoji"));
-            startActivity(intent);
-        });
-
-        // B站主页
-        MaterialCardView bilibiliCard = findViewById(R.id.bilibili_card);
-        bilibiliCard.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://space.bilibili.com/13059944"));
-            startActivity(intent);
-        });
-
-        // 邮箱联系
-        MaterialCardView emailCard = findViewById(R.id.email_card);
-        emailCard.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:Roy@DMR.gg"));
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Mon3tr反馈");
-            startActivity(Intent.createChooser(intent, "发送邮件"));
-        });
+    MaterialCardView githubCard = findViewById(R.id.github_card);
+    githubCard.setOnClickListener(v -> {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+            Uri.parse("https://github.com/PeterPtroc/Mon3tr-Emoji.git"));
+        startActivity(intent);
+    });
 
         // 开源协议
-        MaterialCardView licenseCard = findViewById(R.id.license_card);
-        licenseCard.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.gnu.org/licenses/gpl-3.0.html"));
-            startActivity(intent);
-        });
+    MaterialCardView licenseCard = findViewById(R.id.license_card);
+    licenseCard.setOnClickListener(v -> {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+            Uri.parse("https://github.com/PeterPtroc/Mon3tr-Emoji.git"));
+        startActivity(intent);
+    });
     }
 }
