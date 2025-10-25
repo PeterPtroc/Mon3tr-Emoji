@@ -143,7 +143,7 @@ Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https:/
 - 0x00：原始二进制（已弃用）
 - 0x10：JPEG
 - 0x20：PNG（已弃用）
-- 0x30：GFP（[GFP格式规范](https://github.com/PeterPtroc/Mon3tr-Emoji.git)）
+- 0x30：GFP（[GFP格式规范](https://github.com/RoyZ-iwnl/Mon3tr-Emoji/releases/tag/1.0)）
 
 ### 6. 主要通信流程
 
@@ -200,16 +200,8 @@ Mon3tr 电子吊坠项目致力于复刻手游明日方舟干员[Mon3tr](https:/
 
 ---
 
-## 鸣谢
-
-- 感谢 [囧囧怪的WIFI版本开源项目](https://www.bilibili.com/video/BV1r3LczZE3N/#reply262992366736) 提供灵感  
-  外壳 3D 打印建模和开发板购买可参考该视频
-- 感谢 [LYao2514](https://github.com/LYao2514)维护[非触摸屏分支](https://github.com/PeterPtroc/Mon3tr-Emoji.git)
-- 没有Claude 就没有这个项目~
----
-
 ### LICENSE
 
-[Apache-2.0](https://github.com/PeterPtroc/Mon3tr-Emoji.git)
+[Apache-2.0](https://github.com/PeterPtroc/Mon3tr-Emoji/blob/main/LICENSE)
 
 如有建议欢迎 issue 或 PR！

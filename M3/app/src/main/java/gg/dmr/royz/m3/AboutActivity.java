@@ -36,7 +36,7 @@ public class AboutActivity extends AppCompatActivity {
     MaterialCardView githubCard = findViewById(R.id.github_card);
     githubCard.setOnClickListener(v -> {
         Intent intent = new Intent(Intent.ACTION_VIEW,
-            Uri.parse("https://github.com/PeterPtroc/Mon3tr-Emoji.git"));
+            Uri.parse("https://github.com/PeterPtroc/Mon3tr-Emoji"));
         startActivity(intent);
     });
 
@@ -44,7 +44,7 @@ public class AboutActivity extends AppCompatActivity {
     MaterialCardView licenseCard = findViewById(R.id.license_card);
     licenseCard.setOnClickListener(v -> {
         Intent intent = new Intent(Intent.ACTION_VIEW,
-            Uri.parse("https://github.com/PeterPtroc/Mon3tr-Emoji.git"));
+            Uri.parse("https://github.com/PeterPtroc/Mon3tr-Emoji/blob/main/LICENSE"));
         startActivity(intent);
     });
     }
