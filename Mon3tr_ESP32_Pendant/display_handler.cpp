@@ -1,39 +1,14 @@
-/*
- * Mon3tr Emoji - ESP32-C3 BLE Project and Android APP for custom display
- * Copyright (C) 2025  RoyZ-iwnl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * 本程序是自由软件，在自由软件联盟发布的GNU通用公共许可证条款下，
- * 你可以对其进行再发布及修改。协议版本为第三版或（随你）更新的版本。
- * 
- * 本程序的发布是希望它能够有用，但不负任何担保责任；
- * 具体详情请参见GNU通用公共许可证。
- * 
- * 你理当已收到一份GNU通用公共许可证的副本。
- * 如果没有，请查阅<https://www.gnu.org/licenses/>
- * 
- * Contact/联系方式: Roy@DMR.gg
- */
 #include "display_handler.h"
+
 #include "ble_handler.h"
 #include "commands.h"
 #include "file_system.h"
 
 // 全局变量定义
-TFT_eSPI tft = TFT_eSPI();
-CST816D touch(TOUCH_SDA, TOUCH_SCL, TOUCH_RST, TOUCH_INT);
+
+// 修改处
+// CST816D touch(TOUCH_SDA, TOUCH_SCL, TOUCH_RST, TOUCH_INT);
+
 int currentImage = 0;
 int totalImages = 0;
 unsigned long lastTapTime = 0;
@@ -47,12 +22,6 @@ unsigned long lastFrameTime = 0;
 // GFP专用帧缓冲
 uint16_t* gfpFrameBuffer = nullptr;
 bool gfpBufferReady = false;
-
-/*
-// PNGLE 解码相关变量
-static uint16_t png_line_buffer[SCREEN_WIDTH];  // 行缓冲区
-static uint32_t png_current_y = 0;              // 当前解码行
-*/
 
 // 屏幕参数定义
 #define SCREEN_WIDTH 240     // 屏幕宽度
@@ -100,6 +69,8 @@ void setupDisplay() {
 }
 
 // 初始化触摸模块
+// 修改处
+/*
 void setupTouch() {
   Serial.println("初始化触摸...");
   Wire.begin(TOUCH_SDA, TOUCH_SCL);
@@ -115,14 +86,14 @@ void setupTouch() {
     delay(100);
   }
 }
+*/
 
 // 控制背光
-void controlBacklight(bool on) {
-  digitalWrite(TFT_BL, on ? HIGH : LOW);
-}
+void controlBacklight(bool on) { digitalWrite(TFT_BL, on ? HIGH : LOW); }
 
 // 在圆形屏幕上显示文本（考虑弧度）
-void drawCircularText(const char* text, int y, uint16_t color, uint8_t size, uint8_t font) {
+void drawCircularText(const char* text, int y, uint16_t color, uint8_t size,
+                      uint8_t font) {
   Serial.printf("显示文本: %s, Y位置: %d\n", text, y);
   // 计算文本宽度
   tft.setTextSize(size);
@@ -157,7 +128,8 @@ void drawCircularText(const char* text, int y, uint16_t color, uint8_t size, uin
 }
 
 // 在指定位置显示文本（左对齐）
-void drawText(const char* text, int x, int y, uint16_t color, uint8_t size, uint8_t font) {
+void drawText(const char* text, int x, int y, uint16_t color, uint8_t size,
+              uint8_t font) {
   tft.setTextSize(size);
   tft.setTextColor(color);
   tft.drawString(text, x, y, font);
@@ -180,7 +152,8 @@ uint8_t combineFormatAndIndex(uint8_t format, uint8_t fileIndex) {
 }
 
 // JPEG解码回调（用于静态图片）
-bool jpegOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) {
+bool jpegOutput(int16_t x, int16_t y, uint16_t w, uint16_t h,
+                uint16_t* bitmap) {
   tft.pushImage(x, y, w, h, bitmap);
   return true;
 }
@@ -228,7 +201,8 @@ void releaseGfpBuffer() {
 }
 
 // GFP专用JPEG解码回调（写入帧缓冲）
-bool gfpJpegOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) {
+bool gfpJpegOutput(int16_t x, int16_t y, uint16_t w, uint16_t h,
+                   uint16_t* bitmap) {
   if (!gfpFrameBuffer) return false;
 
   // 将解码的数据写入帧缓冲
@@ -244,41 +218,8 @@ bool gfpJpegOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitma
   return true;
 }
 
-/*
-// PNG 像素绘制回调
-void on_png_draw(pngle_t* pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]) {
-  // 严格的边界检查
-  if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) return;
-  if (w == 0 || h == 0) return;
-
-  // 处理透明度（简单阈值）
-  if (rgba[3] < 128) return;  // 透明像素不绘制
-
-  // 转换为 RGB565
-  uint16_t color = tft.color565(rgba[0], rgba[1], rgba[2]);
-
-  // 如果是新的一行，先推送上一行
-  if (y != png_current_y) {
-    // 推送上一行数据
-    if (png_current_y < SCREEN_HEIGHT) {
-      tft.pushImage(0, png_current_y, SCREEN_WIDTH, 1, png_line_buffer);
-    }
-    // 清空缓冲区并更新行号
-    memset(png_line_buffer, 0, sizeof(png_line_buffer));
-    png_current_y = y;
-  }
-
-  // 确保x坐标在有效范围内
-  if (x < SCREEN_WIDTH) {
-    png_line_buffer[x] = color;
-  }
-}
-*/
-
 // 检查是否有GIFPack在播放
-bool isGifpackPlaying() {
-  return gifpackActive;
-}
+bool isGifpackPlaying() { return gifpackActive; }
 
 // 打开GIFPack文件
 bool openGifpack(const char* filename) {
@@ -306,28 +247,29 @@ bool openGifpack(const char* filename) {
   size_t headerSize = sizeof(GIFPackHeader);
   size_t bytesRead = gifpackFile.read((uint8_t*)&gifpackHeader, headerSize);
   if (bytesRead != headerSize) {
-    Serial.printf("读取GIFPack头信息失败: 请求%d字节, 只读取到%d字节\n", headerSize, bytesRead);
+    Serial.printf("读取GIFPack头信息失败: 请求%d字节, 只读取到%d字节\n",
+                  headerSize, bytesRead);
     gifpackFile.close();
     return false;
   }
 
   // 检查魔术字节
-  if (memcmp(gifpackHeader.magic, GIFPACK_MAGIC, 4) != 0 || gifpackHeader.version != GIFPACK_VERSION) {
+  if (memcmp(gifpackHeader.magic, GIFPACK_MAGIC, 4) != 0 ||
+      gifpackHeader.version != GIFPACK_VERSION) {
     Serial.println("无效的GIFPack格式");
-    Serial.printf("魔术字节: %c%c%c%c, 版本: %d\n",
-                  gifpackHeader.magic[0], gifpackHeader.magic[1],
-                  gifpackHeader.magic[2], gifpackHeader.magic[3],
-                  gifpackHeader.version);
+    Serial.printf("魔术字节: %c%c%c%c, 版本: %d\n", gifpackHeader.magic[0],
+                  gifpackHeader.magic[1], gifpackHeader.magic[2],
+                  gifpackHeader.magic[3], gifpackHeader.version);
     gifpackFile.close();
     return false;
   }
 
-  Serial.printf("GIFPack信息: %d帧, %dfps, %dx%d\n",
-                gifpackHeader.frames, gifpackHeader.fps,
-                gifpackHeader.width, gifpackHeader.height);
+  Serial.printf("GIFPack信息: %d帧, %dfps, %dx%d\n", gifpackHeader.frames,
+                gifpackHeader.fps, gifpackHeader.width, gifpackHeader.height);
 
   // 检查参数合理性
-  if (gifpackHeader.frames == 0 || gifpackHeader.frames > 500 || gifpackHeader.width != 240 || gifpackHeader.height != 240) {
+  if (gifpackHeader.frames == 0 || gifpackHeader.frames > 500 ||
+      gifpackHeader.width != 240 || gifpackHeader.height != 240) {
     Serial.println("GIFPack参数不合理");
     gifpackFile.close();
     return false;
@@ -336,7 +278,8 @@ bool openGifpack(const char* filename) {
   // 检查可用内存
   size_t offsetArraySize = sizeof(uint32_t) * gifpackHeader.frames;
   size_t freeHeap = ESP.getFreeHeap();
-  Serial.printf("需要内存: %d字节, 可用内存: %d字节\n", offsetArraySize, freeHeap);
+  Serial.printf("需要内存: %d字节, 可用内存: %d字节\n", offsetArraySize,
+                freeHeap);
   if (offsetArraySize > (freeHeap / 2)) {  // 保留一半内存给其他用途
     Serial.println("内存不足，无法分配帧偏移量数组");
     gifpackFile.close();
@@ -352,7 +295,8 @@ bool openGifpack(const char* filename) {
   }
 
   // 读取帧偏移量
-  if (gifpackFile.read((uint8_t*)frameOffsets, offsetArraySize) != offsetArraySize) {
+  if (gifpackFile.read((uint8_t*)frameOffsets, offsetArraySize) !=
+      offsetArraySize) {
     Serial.println("读取帧偏移量失败");
     free(frameOffsets);
     frameOffsets = nullptr;
@@ -364,7 +308,8 @@ bool openGifpack(const char* filename) {
   uint32_t fileSize = gifpackFile.size();
   for (int i = 0; i < gifpackHeader.frames; i++) {
     if (frameOffsets[i] >= fileSize) {
-      Serial.printf("帧%d偏移量%d超出文件大小%d\n", i, frameOffsets[i], fileSize);
+      Serial.printf("帧%d偏移量%d超出文件大小%d\n", i, frameOffsets[i],
+                    fileSize);
       free(frameOffsets);
       frameOffsets = nullptr;
       gifpackFile.close();
@@ -404,11 +349,10 @@ void closeGifpack() {
   Serial.println("GIFPack资源已关闭");
 }
 
-
-
 // 显示当前帧
 bool showGifpackFrame() {
-  if (!gifpackActive || !gifpackFile || currentFrame >= gifpackHeader.frames || !gfpFrameBuffer) {
+  if (!gifpackActive || !gifpackFile || currentFrame >= gifpackHeader.frames ||
+      !gfpFrameBuffer) {
     Serial.println("GIFPack状态无效");
     return false;
   }
@@ -447,7 +391,8 @@ bool showGifpackFrame() {
   // 读取帧数据
   size_t bytesRead = gifpackFile.read(frameBuffer, frameSize);
   if (bytesRead != frameSize) {
-    Serial.printf("读取帧数据失败: 请求%d字节，实际读取%d字节\n", frameSize, bytesRead);
+    Serial.printf("读取帧数据失败: 请求%d字节，实际读取%d字节\n", frameSize,
+                  bytesRead);
     free(frameBuffer);
     return false;
   }
@@ -478,7 +423,8 @@ bool showGifpackFrame() {
   // 恢复为普通JPEG回调
   TJpgDec.setCallback(jpegOutput);
 
-  //Serial.printf("成功解码帧 %d/%d 到缓冲区\n", currentFrame + 1, gifpackHeader.frames);
+  // Serial.printf("成功解码帧 %d/%d 到缓冲区\n", currentFrame + 1,
+  // gifpackHeader.frames);
   return true;
 }
 
@@ -548,7 +494,8 @@ void displayImage(int index) {
   tft.fillScreen(TFT_BLACK);
 
   String filename = getImageFilename(index);
-  Serial.printf("准备显示图片: %s, 格式: %s\n", filename.c_str(), filename.substring(filename.lastIndexOf('.')).c_str());
+  Serial.printf("准备显示图片: %s, 格式: %s\n", filename.c_str(),
+                filename.substring(filename.lastIndexOf('.')).c_str());
 
   // 根据文件扩展名确定格式
   if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
@@ -575,84 +522,7 @@ void displayImage(int index) {
       Serial.println("JPEG文件打开失败");
       showErrorScreen("JPEG OPEN FAIL");
     }
-
-  } /*else if (filename.endsWith(".png")) {
-    Serial.println("开始PNG解码...");
-
-    // 检查内存状态，如果内存太少则跳过PNG处理
-    size_t freeHeap = ESP.getFreeHeap();
-    Serial.printf("PNG解码前可用内存: %d\n", freeHeap);
-
-    if (freeHeap < 80000) {
-      Serial.println("内存不足，无法解码PNG");
-      showErrorScreen("PNG MEM LOW");
-      isDisplaying = false;
-      return;
-    }
-
-    File pngFile = LittleFS.open(filename, "r");
-    if (pngFile) {
-      uint32_t fileSize = pngFile.size();
-      Serial.printf("PNG文件大小: %d, 可用内存: %d\n", fileSize, freeHeap);
-
-      // 创建PNG解码器，减少重试次数降低内存压力
-      pngle_t* pngle = pngle_new();
-      if (pngle) {
-        Serial.println("PNG解码器创建成功");
-        pngle_set_draw_callback(pngle, on_png_draw);
-
-        // 重置PNG解码状态
-        png_current_y = 0;
-        memset(png_line_buffer, 0, sizeof(png_line_buffer));
-
-        // 使用更小的缓冲区减少内存压力
-        uint8_t buffer[128];  // 减小缓冲区从256到128
-        bool decodeSuccess = true;
-
-        while (pngFile.available() && decodeSuccess) {
-          int bytesRead = pngFile.read(buffer, sizeof(buffer));
-          if (pngle_feed(pngle, buffer, bytesRead) < 0) {
-            Serial.println("PNG解码错误");
-            decodeSuccess = false;
-            break;
-          }
-          // yield调用，防止看门狗重启
-          yield();
-        }
-
-        // 推送最后一行（如果有）
-        if (decodeSuccess && png_current_y < SCREEN_HEIGHT) {
-          tft.pushImage(0, png_current_y, SCREEN_WIDTH, 1, png_line_buffer);
-        }
-
-        pngle_destroy(pngle);
-
-        if (!decodeSuccess) {
-          showErrorScreen("PNG DECODE ERR");
-        }
-      } else {
-        Serial.println("PNG解码器创建失败");
-        showErrorScreen("PNG MEM FRAGMENT");
-      }
-      pngFile.close();
-    } else {
-      Serial.println("PNG文件打开失败");
-      showErrorScreen("PNG OPEN FAIL");
-    }
-
-    // PNG处理完毕后，确保GFP缓冲区仍然可用
-    if (!gfpFrameBuffer) {
-      Serial.println("PNG处理后检测到GFP缓冲区丢失，重新分配");
-      gfpFrameBuffer = (uint16_t*)malloc(SCREEN_WIDTH * SCREEN_HEIGHT * 2);
-      if (gfpFrameBuffer) {
-        Serial.println("GFP帧缓冲重新分配成功");
-      } else {
-        Serial.println("警告：GFP帧缓冲重新分配失败");
-      }
-    }
-
-  } */
-  else if (filename.endsWith(".gfp")) {
+  } else if (filename.endsWith(".gfp")) {
     // GIFPack格式 - 确保帧缓冲可用
     Serial.println("开始初始化GIFPack...");
 
@@ -673,7 +543,8 @@ void displayImage(int index) {
       // 尝试分配，但不要多次重试，避免进一步碎片化
       gfpFrameBuffer = (uint16_t*)malloc(bufferSize);
       if (!gfpFrameBuffer) {
-        Serial.printf("GFP帧缓冲分配失败，需要%d字节，可用%d字节\n", bufferSize, freeHeap);
+        Serial.printf("GFP帧缓冲分配失败，需要%d字节，可用%d字节\n", bufferSize,
+                      freeHeap);
         showErrorScreen("GFP BUF FAIL");
         isDisplaying = false;
         return;
@@ -701,7 +572,6 @@ void displayImage(int index) {
       Serial.println("GIFPack初始化失败");
       showErrorScreen("GFP INIT FAIL");
     }
-
   } else {
     Serial.printf("不支持的文件格式: %s\n", filename.c_str());
     showErrorScreen("UNSUPPORTED FORMAT");
@@ -711,7 +581,9 @@ void displayImage(int index) {
   isDisplaying = false;
 }
 
+// 修改处
 // 检查手势
+/*
 void checkGestures() {
   uint16_t touchX, touchY;
   uint8_t gesture;
@@ -727,9 +599,9 @@ void checkGestures() {
         break;
       case GESTURE_SLIDE_RIGHT:
         if (totalImages > 0) {
-          currentImage = (currentImage > 0) ? (currentImage - 1) : (totalImages - 1);
-          displayImage(currentImage);
-          Serial.printf("向右滑动：上一张图片 %d\n", currentImage);
+          currentImage = (currentImage > 0) ? (currentImage - 1) : (totalImages
+- 1); displayImage(currentImage); Serial.printf("向右滑动：上一张图片 %d\n",
+currentImage);
         }
         break;
       case GESTURE_SINGLE_TAP:
@@ -739,6 +611,7 @@ void checkGestures() {
     }
   }
 }
+*/
 
 // 设置显示图片
 void setDisplayImage(uint8_t index) {
@@ -759,7 +632,7 @@ void setDisplayImage(uint8_t index) {
     currentImage = foundIndex;
     displayImage(currentImage);
     // 发送成功响应，返回组合索引
-    uint8_t payload[1] = { index };
+    uint8_t payload[1] = {index};
     sendResponse(CMD_SET_DISPLAY, RESP_SUCCESS, payload, 1);
   } else {
     sendResponse(CMD_SET_DISPLAY, RESP_PARAM_ERROR);
@@ -771,7 +644,7 @@ void showStartupScreen() {
   tft.fillScreen(TFT_BLACK);
   drawCircularText("Mon3tr", 90, TFT_GREEN, 3);
   drawCircularText("STARTING...", 130, TFT_WHITE, 2);
-  drawCircularText("By:RoyZ", 160, TFT_WHITE, 2);
+  drawCircularText("Doc.Sun", 160, TFT_WHITE, 2);
   Serial.println("显示启动画面");
 }
 
@@ -779,7 +652,7 @@ void showStartupScreen() {
 void showWaitingScreen() {
   tft.fillScreen(TFT_BLACK);
   drawCircularText("Mon3tr", 60, TFT_GREEN, 3);
-  drawCircularText("By:RoyZ", 100, TFT_CYAN, 1);
+  drawCircularText("Doc.Sun", 100, TFT_CYAN, 1);
   drawCircularText("WAITING", 130, TFT_YELLOW, 2);
   drawCircularText("IMAGE UPLOAD...", 160, TFT_WHITE, 2);
   Serial.println("显示等待画面");
